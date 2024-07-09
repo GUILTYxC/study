@@ -1,0 +1,305 @@
+
+
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive English Reading</title>
+
+
+    <link rel="stylesheet" href="{% static 'myapp/bootstrap/dist/css/bootstrap.min.css' %}">
+    <!-- 象形字体 -->
+    <link rel="stylesheet" href="{% static 'myapp/font-awesome/css/font-awesome.min.css' %}">
+    <!-- 图标 -->
+    <link rel="stylesheet" href="{% static 'myapp/Ionicons/css/ionicons.min.css' %}">
+    <!-- 自定义 -->
+    <link rel="stylesheet" href="{% static 'myapp/zhuci.css' %}">
+    <style>
+        #word-phonetic-audio {
+            border-bottom: 1px solid #ccc; /* 灰色分割线 */
+            margin-bottom: 10px; /* 底部边距 */
+            padding-bottom: 10px; /* 底部内边距 */
+        }
+        #word-phonetic {
+            font-style: italic;
+        }
+    </style>
+
+
+</head>
+
+<body>
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span>题库</span>
+
+            </button>
+            <a class="navbar-brand" href="{% url 'my_index' %}" style="font-size: 16px;"><i class="fa fa-home"
+                                                                                            aria-hidden="true"
+                                                                                            style="margin-right: 5px;"></i>主页</a>
+
+
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">题型 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+
+                        {% for year in years %}
+                            <li>{{ year.name }}</li>
+
+                            <div class="tixing hide">
+                                <ul>完型填空</ul>
+                                <ul>段落匹配</ul>
+                                <ul>阅读passage1</ul>
+                                <ul>阅读passage2</ul>
+
+                            </div>
+                        {% endfor %}
+                    </ul>
+
+                </li>
+
+                <li><a href="{% url 'my_home' %}">我的</a></li>
+            </ul>
+
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="zhuci_tishi">
+    <span>请点击上面的题库/题型,</span>
+    <span>选择对应的真题哦！</span>
+</div>
+
+<div id="results"></div>
+
+<div id="translation" class="translation-card">
+    <span id="word-to-add" style="color: #0f0f0f; font-weight: bold;"></span>
+
+    <div id="word-phonetic-audio" class="phonetic-audio-container">
+        <span id="word-phonetic"></span>
+        <i id="play-audio-icon" class="fa fa-volume-up" onclick="playAudio()"></i>
+        <audio id="word-audio" style="display:none;"></audio>
+    </div>
+
+    <span id="word-translation"></span>
+
+    <button onclick="addToWordbook()">加入单词本</button>
+{#    <button onclick="goToChatHome()" style="background-color: #00c0ef">AI助手</button>#}
+</div>
+
+
+<!-- jQuery 3 -->
+<script src="{% static 'myapp/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'myapp/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+
+<script>
+    $(document).ready(function () {
+
+
+        $('.tixing ul').click(function () {
+            $('.zhuci_tishi').hide(); // 隐藏指示信息
+        });
+
+        // 当点击年份时，显示或隐藏对应的题型列表
+        $('.dropdown-menu li').click(function () {
+            var tixingElement = $(this).next('.tixing');
+
+            // 检查当前点击的年份是否已经展开
+            if (tixingElement.hasClass('hide')) {
+                // 如果当前点击的年份未展开，则隐藏所有年份并展开当前点击的年份
+                $('.tixing').addClass('hide');
+                tixingElement.removeClass('hide');
+            } else {
+                // 如果当前点击的年份已经展开，则隐藏它
+                tixingElement.addClass('hide');
+            }
+        });
+
+
+        // 当点击 ul 字段时，关闭整个下拉菜单
+        $('.tixing ul').click(function () {
+            $(this).closest('.dropdown').removeClass('open'); // 关闭下拉菜单
+            $('#bs-example-navbar-collapse-1').collapse('hide');
+        });
+
+        // 阻止点击事件冒泡到 Bootstrap 的下拉菜单关闭逻辑
+        $('.dropdown-menu').click(function (event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        var csrftoken = $('[name=csrfmiddlewaretoken]').val(); // 获取 CSRF 令牌
+        var selectedYear; // 用于存储选中的年份
+
+        // 当点击年份时，存储选中的年份并显示题型列表
+        $('.dropdown-menu li').click(function () {
+            selectedYear = $(this).text(); // 存储选中的年份
+            $('.tixing').addClass("hide"); // 隐藏所有题型列表
+            $(this).next('.tixing').removeClass("hide"); // 显示当前题型列表
+        });
+
+        // 当点击题型时，发送 AJAX 请求
+        $('.tixing ul').click(function () {
+            var selectedType = $(this).text(); // 获取点击的题型
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'my_zhuci4' %}', // 替换为您的视图 URL
+                data: {
+                    'selectedYear': selectedYear,
+                    'selectedType': selectedType,
+                    'csrfmiddlewaretoken': csrftoken // 包含 CSRF 令牌
+                },
+                success: function (response) {
+                    // 处理服务器响应，例如显示一个提示或更新页面内容
+                    $('#results').html(response.data);
+                    // 为所有单词添加点击事件监听器
+                    addWordClickListeners();
+
+                },
+
+                error: function (error) {
+                    // 处理请求失败的情况
+                    console.error('请求失败: ', error);
+                }
+
+            });
+        });
+
+
+
+
+        function addWordClickListeners() {
+            $('.word').click(function (event) {
+                var word = $(this).text();
+                var cleanedWord = word.replace(/^[^\w]*|[^\w]*$/g, '');
+
+                fetch(`/index/translate/?word=${cleanedWord}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 显示翻译结果
+                        var $translationCard = $('#translation');
+                        $('#word-to-add').text(cleanedWord); // 更新单词
+                        if (data.phonetic) {
+                            $('#word-phonetic').text('[' + data.phonetic + ']').show(); // 更新音标，加上方括号，并确保音标部分是可见的
+                        } else {
+                            $('#word-phonetic').hide(); // 如果音标为空，则隐藏音标部分
+                        }
+                        $('#word-translation').text(data.translation); // 更新翻译
+
+                        // 设置发音的URL
+                        var localAudioUrl = `/static/fayin/Lingoes English/voice/${cleanedWord[0].toLowerCase()}/${cleanedWord}.wav`;
+                        var youdaoAudioUrl = `http://dict.youdao.com/dictvoice?type=0&audio=${cleanedWord}`;
+
+                        // 检查本地是否有对应的发音文件
+                        fetch(localAudioUrl, {method: 'HEAD'})
+                            .then(resp => {
+                                if (resp.ok) {
+                                    $('#word-audio').attr('src', localAudioUrl);
+                                } else {
+                                    $('#word-audio').attr('src', youdaoAudioUrl);
+                                }
+                            }).catch(err => {
+                            console.error('Error fetching local audio: ', err);
+                            $('#word-audio').attr('src', youdaoAudioUrl);
+                        });
+                        // 设置卡片的初始位置
+                        var offset = $(this).offset();
+                        var wordWidth = $(this).width();
+                        var cardWidth = $translationCard.outerWidth();
+                        var leftPosition = offset.left + wordWidth / 2 - cardWidth / 2; // 计算使卡片居中的左边距
+
+                        // 设置最小边距值
+                        var minMargin = 10; // 假设最小边距为10像素
+
+                        // 确保卡片不会超出屏幕边界，同时保留最小边距
+                        leftPosition = Math.max(minMargin, Math.min(leftPosition, $(window).width() - cardWidth - minMargin));
+
+                        $translationCard.css({
+                            top: offset.top + $(this).height() + 5, // 卡片位于单词下方 5px
+                            left: leftPosition,
+                            display: 'block' // 显示卡片
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+
+
+        addWordClickListeners();
+
+
+    });
+</script>
+
+<script>
+        function playAudio() {
+            var audio = document.getElementById('word-audio');
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.currentTime = 0; // 重新开始
+            }
+        }
+    </script>
+
+<script>
+    function goToChatHome() {
+    // 使用 window.location 实现页面跳转
+    window.location.href = "{% url 'chat_home' %}";
+}
+    function addToWordbook() {
+        var word = $('#word-to-add').text();
+        var phonetic = $('#word-phonetic').text();
+        var translation = $('#word-translation').text();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "add_to_wordbook" %}',
+            data: {
+                'word': word,
+                'phonetic': phonetic,
+                'translation': translation,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                alert(response.message);
+            },
+            error: function (error) {
+                alert('已添加');
+            }
+        });
+    }
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+body .footer-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+}
+
+body .menu-item {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+}
+
+body .menu-item a {
+    font-size: 33px;
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    flex-direction: column; /* 设置为垂直布局 */
+    align-items: center; /* 水平居中 */
+    justify-content: center; /* 垂直居中 */
+    padding: 5px 0; /* 增加内边距以避免内容溢出 */
+}
+
+body .menu-item a i {
+    margin-bottom: 5px; /* 在图标和文字之间添加间距 */
+    font-size: 50px; /* 调整图标的大小 */
+}

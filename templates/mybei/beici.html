@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'myapp/bootstrap/dist/css/bootstrap.min.css' %}">
+    <!-- 象形字体 -->
+    <link rel="stylesheet" href="{% static 'myapp/font-awesome/css/font-awesome.min.css' %}">
+    <!-- 图标 -->
+    <link rel="stylesheet" href="{% static 'myapp/Ionicons/css/ionicons.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'myapp/footer-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'mybei/beici.css' %}">
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'my_index' %}" style="font-size: 16px;">
+            <i class="fa fa-home" aria-hidden="true" style="margin-right: 5px;"></i>主页
+        </a>
+
+        <a class="navbar-brand" href="{% url 'my_home' %}" style="font-size: 16px; float: right;">
+            <i class="fa fa-user" aria-hidden="true" style="margin-right: 5px;"></i>我的
+        </a>
+    </div>
+</nav>
+
+
+<div class="container">
+    <h1 style="text-align: center;margin: 0px 0px 20px 0px">CET-4</h1>
+    <button id="self-check-mode" class="btn btn-secondary">自查模式</button>
+    <button id="recite-mode" class="btn btn-secondary">背词模式</button>
+    <button id="settings-btn" class="btn btn-info" data-toggle="modal" data-target="#settingsModal">设置</button>
+
+    <ul class="list-group mb-4">
+        {% for word in page_obj %}
+            <li class="list-group-item" style="padding-top: 10px">
+                <strong style="color: #00a65a;font-size: 20px">{{ word.word }}</strong>
+                <span>&nbsp&nbsp</span>- <span>&nbsp&nbsp</span>{{ word.phonetic }}
+                <span>&nbsp&nbsp</span>
+                <audio id="audio-{{ word.id }}" style="display:none;">
+                    <source src="{{ word.get_audio_url }}" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
+                <i class="fa fa-volume-up play-audio-icon" data-audio="audio-{{ word.id }}"></i>
+                <p class="translation-text" style="">{{ word.translation }}</p>
+                <!-- 隐藏的 audio 元素和播放按钮 -->
+                <div class="text-right">
+                    <button class="btn btn-info add-to-wordbook" style="display: none;"
+                            data-word="{{ word.word }}"
+                            data-phonetic="{{ word.phonetic }}"
+                            data-translation="{{ word.translation }}">加入生词本
+                    </button>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    <nav aria-label="Page navigation">
+        <div class="text-center"> <!-- 添加 text-center 来居中 -->
+            <ul class="pagination justify-content-center"> <!-- 添加 justify-content-center 来居中 -->
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}"
+                           class="page-link btn btn-secondary">上一天</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }}</span> <!-- 显示当前页 -->
+                </li>
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link btn btn-secondary">下一天</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+</div>
+
+<!-- 设置模态框 -->
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">设置每天的学习数量</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="daily-word-count" class="form-control" placeholder="请输入每天背诵的单词数量">
+                <!-- 添加隐藏的字段来保存最后访问的页面 -->
+                <input type="hidden" id="last-page-visited" value="{{ page_obj.number }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="save-settings">保存设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery 3 -->
+<script src="{% static 'myapp/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'myapp/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.play-audio-icon').click(function () {
+            var audioId = $(this).data('audio');
+            var audioElement = document.getElementById(audioId);
+            if (audioElement) {
+                audioElement.play();
+            }
+        });
+        $('#self-check-mode').click(function () {
+            $('.translation-text').hide(); // 隐藏翻译
+        });
+
+        $('#recite-mode').click(function () {
+            $('.translation-text').show(); // 显示翻译
+        });
+        $('#self-check-mode').click(function () {
+            $('.translation-text').hide(); // 隐藏翻译
+            $('.add-to-wordbook').show();  // 显示“加入生词本”的按钮
+        });
+
+        $('#recite-mode').click(function () {
+            $('.translation-text').show(); // 显示翻译
+            $('.add-to-wordbook').hide();  // 隐藏“加入生词本”的按钮
+        });
+
+        $('.add-to-wordbook').click(function () {
+            var word = $(this).data('word');
+            var phonetic = $(this).data('phonetic');
+            var translation = $(this).data('translation');
+            var csrfToken = '{{ csrf_token }}';  // 获取 CSRF 令牌
+
+            $.ajax({
+                url: '{% url 'add_to_wordbook' %}',  // 后端处理的 URL
+                method: 'POST',
+                data: {
+                    'word': word,
+                    'phonetic': phonetic,
+                    'translation': translation,
+                    'csrfmiddlewaretoken': csrfToken  // 添加 CSRF 令牌
+                },
+                success: function (response) {
+                    // 处理成功的逻辑
+                    alert("单词已加入生词本");
+                },
+                error: function () {
+                    // 处理错误的逻辑
+                    alert("已经添加该单词啦！");
+                }
+            });
+        });
+
+        $('#save-settings').click(function () {
+            var dailyWordCount = $('#daily-word-count').val();
+            var lastPageVisited = $('#last-page-visited').val();
+            var csrfToken = '{{ csrf_token }}';
+
+            $.ajax({
+                url: '{% url 'my_update_user_settings' %}',  // 后端 URL
+                method: 'POST',
+                data: {
+                    'daily_new_words': dailyWordCount,
+                    'last_page_visited': lastPageVisited,
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                success: function (response) {
+                    // 处理成功的逻辑
+                    alert("设置已保存");
+                    location.reload(); // 刷新页面以应用新的设置
+                },
+                error: function () {
+                    // 处理错误的逻辑
+                    alert("设置保存失败");
+                }
+            });
+        });
+
+    });
+</script>
+
+<script>
+    function highlightWordTypes() {
+        const wordTypes = ['interj', 'n', 'pron', 'a', 'adj', 'num', 'v', 'adv', 'art', 'prep', 'conj', 'int', 'vt', 'vi', 'abbr', 'aux'];
+
+        document.querySelectorAll('.translation-text').forEach(function (elem) {
+            let html = elem.innerHTML;
+            wordTypes.forEach(function (type) {
+                const regex = new RegExp(`(\\b${type}\\b)`, 'g');
+                html = html.replace(regex, '<br><span style="color: red">$1</span>');
+            });
+
+            // 检查并移除内容开头的 <br>
+            if (html.startsWith('<br>')) {
+                html = html.substring(4); // 移除前4个字符 ("<br>")
+            }
+
+            elem.innerHTML = html;
+        });
+    }
+
+    $(document).ready(function () {
+        highlightWordTypes();
+    });
+</script>
+
+
+</body>
+</html>

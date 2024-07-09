@@ -1,0 +1,25 @@
+.dropdown-menu li{
+    padding-left: 15px;
+    padding-top: 8px;
+    padding-bottom: 3px;
+}
+
+
+.tixing ul{
+ padding-top: 2px;
+ padding-bottom: 2px;
+ 
+}
+
+.hide{
+    display: none;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f2f2f2; /* 浅灰色背景 */
+}
+
+.show-question-dropdown {
+    display: block !important;
+}
+

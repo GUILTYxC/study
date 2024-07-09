@@ -1,0 +1,21 @@
+{% extends "myadmin/adminbase.html" %}
+
+{% block main_body %}
+
+<h2>生成卡密</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">生成</button>
+</form>
+
+{% if generated_cards %}
+    <h3>生成的卡密</h3>
+    <ul>
+        {% for card in generated_cards %}
+            <li>卡密: {{ card.code }}, 有效期: {{ card.duration }}天, 备注: {{ card.remark }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

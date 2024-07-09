@@ -1,0 +1,133 @@
+
+body {
+    margin: 60px;
+}
+
+.shoutu_card {
+    background-color: #f7fffb;
+    background-size: cover;
+    background-position: center;
+
+    text-align: left;
+    border-radius: 40px;
+    padding: 70px 50px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shoutu_card > div:first-child {
+    font-size: 60px; /* 大字标题的字体大小 */
+    margin-bottom: 18px; /* 与下方内容的间距 */
+}
+
+.shoutu_card > div:nth-child(2) {
+    font-size: 40px; /* 小字说明的字体大小 */
+    margin-bottom: 16px; /* 与按钮的间距 */
+}
+
+.shoutu_card > div:nth-child(3) {
+    margin-top: 20px;
+}
+
+.shoutu_card span {
+    background-color: #007bff; /* 按钮背景颜色 */
+    color: white;
+    font-size: 40px;
+    padding: 10px 80px;
+    border-radius: 5px;
+    cursor: pointer; /* 鼠标悬停时的手形光标 */
+    transition: background-color 0.3s;
+}
+
+.shoutu_card span:hover {
+    background-color: #0056b3; /* 鼠标悬停时的按钮背景颜色 */
+}
+
+
+.chaci_container {
+    display: flex;
+    justify-content: space-around; /* 卡片间均匀分布 */
+    flex-wrap: wrap; /* 确保在小屏幕上自动换行 */
+    margin-bottom: 20px;
+
+}
+
+.chaci_row {
+    display: flex; /* 使用弹性盒模型 */
+    justify-content: space-around; /* 子元素之间平均分布空间 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
+.chaci_card {
+    flex: 1; /* 每个卡片占用等量空间 */
+    width: 100%;
+    display: block;
+    overflow: hidden; /* 防止图片溢出容器 */
+    border-radius: 10px; /* 保持圆角设计 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 给卡片添加阴影 */
+    margin: 10px; /* 根据需要调整边距 */
+    transition: transform 0.3s ease; /* 添加鼠标悬浮时的变换效果 */
+}
+
+.chaci_card img {
+    width: 100%; /* 宽度填满容器 */
+    height: auto; /* 高度自动调整 */
+    display: block; /* 避免底部留白 */
+}
+
+.chaci_card a {
+    display: block; /* 确保<a>标签作为块级元素，使整个区域可点击 */
+}
+
+/* 移除最后一个卡片的右边距 */
+.chaci_card:last-child {
+    margin-right: 0;
+
+}
+
+.chaci_card span {
+    display: block; /* 占据整个行 */
+    font-size: 35px; /* 字体大小 */
+    color: #333; /* 文字颜色 */
+}
+
+
+.beici_card {
+    background-color: #fff; /* 卡片背景颜色 */
+    border-radius: 10px; /* 圆角边框 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果，增加立体感 */
+    padding: 40px; /* 内部间距 */
+    text-align: left; /* 文本居中 */
+
+    margin: 10px auto; /* 居中显示 */
+}
+
+.beici_card span {
+
+    margin: 20px 0; /* 元素间距 */
+    font-size: 40px; /* 字体大小 */
+    color: #333; /* 文字颜色 */
+}
+
+/* 样式用于图标 */
+.beici_card span:first-child,
+.beici_card span:last-child {
+    font-size: 40px; /* 图标的大小 */
+    /* 这里可以添加更多关于图标的样式 */
+}
+
+a {
+    color: inherit; /* 链接颜色与其父元素相同 */
+    text-decoration: none; /* 去除下划线 */
+}
+
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none; /* 去除悬停、访问过、普通链接和活动链接的下划线 */
+    color: inherit; /* 在所有状态下保持与父元素相同的颜色 */
+}
+
+
+
+
+
+
+

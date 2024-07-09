@@ -1,0 +1,9 @@
+.translation-text {
+    margin: 0;
+    padding: 0;
+}
+.text-right {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* 将内容对齐到右侧 */
+}

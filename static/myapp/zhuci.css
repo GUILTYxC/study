@@ -1,0 +1,217 @@
+
+
+
+
+.reading-material h2 {
+    text-align: center; /* 文本居中 */
+    font-size: 18px; /* 设置字体大小，您可以根据需要调整 */
+    margin-top: 20px; /* 上边距 */
+    margin-bottom: 20px; /* 下边距 */
+}
+
+
+.content-panel {
+    background-color: #ffffff; /* 白色背景 */
+    border-radius: 15px; /* 圆角边框 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 轻微阴影 */
+    padding: 20px; /* 增加内边距 */
+    margin: 15px; /* 增加底部外边距 */
+}
+
+
+.text-content p {
+    font-family: 'Arial', sans-serif; /* 设置字体 */
+    text-indent: 2em; /* 首行缩进 */
+    line-height: 1.6; /* 行间距 */
+    margin-bottom: 1em; /* 段落间距 */
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+
+
+}
+
+.question {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+.question-text {
+    font-weight: bold; /* 加粗问题文本 */
+    margin-bottom: 0.5em; /* 问题文本和选项之间的间距 */
+}
+
+.options ul {
+    list-style-type: none; /* 移除默认的列表样式 */
+    padding-left: 0; /* 移除默认的左内边距 */
+}
+
+.options li {
+    background-color: #f0f0f0; /* 背景色 */
+    border-radius: 5px; /* 圆角边框 */
+    padding: 0.5em; /* 内边距 */
+
+    list-style-type: none; /* 移除默认的列表样式 */
+    margin-bottom: 5px; /* 选项之间的间距 */
+
+
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    line-height: 1.6; /* 行间距 */
+
+}
+
+
+
+
+
+
+/* 原有的翻译卡片样式 */
+.translation-card {
+    position: absolute;
+    background-color: rgba(210, 253, 214, 0.95); /* 淡绿色背景 */
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+    padding: 10px;
+    display: none;
+    z-index: 1000;
+    max-width: 300px;
+    word-wrap: break-word;
+    font-size: 16px;
+}
+
+/* 卡片内的文本样式 */
+#word-to-add, #word-phonetic, #word-translation {
+    display: block; /* 使每项内容成一行 */
+    margin-bottom: 5px; /* 内容之间的间距 */
+}
+
+/* "加入单词本"按钮的样式 */
+.translation-card button {
+    background-color: #4CAF50; /* 绿色背景 */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 平滑背景色变换效果 */
+}
+
+.translation-card button:hover {
+    background-color: #45a049; /* 鼠标悬停时的背景颜色 */
+}
+
+
+
+/*完型*/
+.cloze-question {
+    margin-bottom: 5px;
+    padding: 5px 20px; /* 填充上下5px，左右20px */
+}
+
+.cloze-question-text {
+    font-weight: bold;
+    margin-right: 5px; /* 题干和选项之间的间隔 */
+}
+
+.cloze-option {
+    margin-right: 5px; /* 选项之间的间隔 */
+}
+
+/*翻译*/
+.translation-question {
+    margin: 15px;
+}
+
+.translation-text {
+    font-size: 16px; /* 设置字体大小 */
+    line-height: 1.5; /* 设置行高 */
+    padding: 10px; /* 设置内边距 */
+    border: 1px solid #ccc; /* 设置边框 */
+    border-radius: 5px; /* 设置圆角 */
+}
+
+
+/*下拉框*/
+
+.dropdown-menu {
+    background-color: #f8f9fa; /* 菜单背景色 */
+    border-radius: 5px; /* 菜单圆角 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 菜单阴影 */
+}
+
+.dropdown-menu li {
+    padding: 8px 15px; /* 列表项内边距 */
+}
+
+.dropdown-menu li:hover {
+    background-color: #e9ecef; /* 鼠标悬停背景色 */
+}
+
+.tixing {
+    padding-left: 20px; /* 题型列表左内边距 */
+}
+
+.tixing ul {
+    list-style-type: none; /* 移除列表项目符号 */
+    padding: 5px 0; /* 列表项上下内边距 */
+    padding-left: 10px;
+}
+
+.tixing ul:hover {
+    background-color: #e9ecef; /* 鼠标悬停背景色 */
+}
+
+.hide{
+    display: none;
+}
+
+.zhuci_tishi {
+    padding-top: 160px;
+    text-align: center; /* 文本居中 */
+}
+
+.zhuci_tishi span {
+    display: block; /* 让每个span占据一行 */
+    font-size: 20px; /* 设置字体大小 */
+}
+
+.fa-play-circle {
+    font-size: 24px;
+    color: #4CAF50; /* 绿色 */
+    cursor: pointer;
+}
+
+.fa-play-circle:hover {
+    color: #45a049; /* 深绿色 */
+}
+
+.phonetic-audio-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
